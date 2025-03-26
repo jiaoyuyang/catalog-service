@@ -5,6 +5,9 @@ FROM openjdk:17 as build
 # Add Maintainer Info
 LABEL maintainer="jiaoyuyang <jiaoyuyang@live.com>"
 
+# The application's jar file
+ARG JAR_FILE=target/*.jar
+
 ADD ${JAR_FILE} app.jar
 
 #execute the application
