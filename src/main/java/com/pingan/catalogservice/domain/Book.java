@@ -1,7 +1,7 @@
 package com.pingan.catalogservice.domain;
 
 public record Book(String isbn,
-                   String titile,
+                   String title,
                    String author,
                    Double price) {
 

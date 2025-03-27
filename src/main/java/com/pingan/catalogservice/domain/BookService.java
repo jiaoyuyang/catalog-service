@@ -35,7 +35,7 @@ public class BookService {
                 .map(existingBook -> {
                     var bookToUpdate = new Book(
                             existingBook.isbn(),
-                            book.titile(),
+                            book.title(),
                             book.author(),
                             book.price());
                     return bookRepository.save(bookToUpdate);

@@ -5,7 +5,7 @@ import java.util.Optional;
 public interface BookRepository {
     Iterable<Book> findAll();
 
-    Optional<Object> findByIsbn(String isbn);
+    Optional<Book> findByIsbn(String isbn);
 
     boolean existsByIsbn(String isbn);
 
