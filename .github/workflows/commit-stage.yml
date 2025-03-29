@@ -16,7 +16,7 @@ jobs:
      with:
       distribution: temurin
       java-version: 17
-      cache: gradle
+      cache: mvn
    - name: Build, unit tests and integration tests
      run: |
       chmod +x mvn
