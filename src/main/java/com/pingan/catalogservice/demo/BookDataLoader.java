@@ -8,7 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("testdata") //将该类分配给testdata profile，它仅在testdata profile处于激活状态时才会注册
+@Profile("default") //将该类分配给testdata profile，它仅在testdata profile处于激活状态时才会注册
 public class BookDataLoader {
     private final BookRepository bookRepository;
 
@@ -18,8 +18,8 @@ public class BookDataLoader {
 
     @EventListener(ApplicationReadyEvent.class)
     public void loadBookTestData(){
-        var book1 = new Book("1234567891","Northern Lights","Lyra Silverstar",9.90);
-        var book2 = new Book("1234567892","Polar Journey","lorek Polarson",12.90);
+        var book1 = Book.of("1234567895","Northern Lights","Lyra Silverstar",9.90);
+        var book2 = Book.of("1234567896","Polar Journey","lorek Polarson",12.90);
         bookRepository.save(book1);
         bookRepository.save(book2);
     }
