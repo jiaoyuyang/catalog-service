@@ -19,11 +19,11 @@ public class BookDataLoader {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void loadBookTestData(){
+    public void loadBookTestData() {
         bookRepository.deleteAll();
-        var book1 = Book.of("1234567895","Northern Lights","Lyra Silverstar",9.90);
-        var book2 = Book.of("1234567896","Polar Journey","lorek Polarson",12.90);
-        bookRepository.saveAll(List.of(book1,book2));
+        var book1 = Book.of("1234567895", "Northern Lights", "Lyra Silverstar", 9.90, "Polarsophia");
+        var book2 = Book.of("1234567896", "Polar Journey", "lorek Polarson", 12.90, "Polarsophia");
+        bookRepository.saveAll(List.of(book1, book2));
     }
 
 }
