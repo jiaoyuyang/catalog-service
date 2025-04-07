@@ -29,6 +29,7 @@
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2021.0.3</spring-cloud.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
     </properties>
 
     <dependencies>
@@ -89,6 +90,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -96,6 +103,15 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 引入 Testcontainers BOM 管理版本 -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

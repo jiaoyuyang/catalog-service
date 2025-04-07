@@ -4,6 +4,7 @@ import com.pingan.catalogservice.domain.Book;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(
         //加载完整的 spring web 应用上下文以及监听任意端口的 servlet 容器
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration")  //启用 "integration" profile 以加载 application-integration.yml 中的配置
 class CatalogServiceApplicationTests {
     @Autowired
     private WebTestClient webTestClient; //为了测试而执行rest 调用的工具
