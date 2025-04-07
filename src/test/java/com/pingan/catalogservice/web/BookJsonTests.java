@@ -30,7 +30,10 @@ public class BookJsonTests {
                     "isbn": "1234567890",
                     "title": "Title",
                     "author": "Author",
-                    "price": 9.90
+                    "price": 9.90,
+                    "createdDate": null,
+                    "lastModifiedDate": null,
+                    "version": 0
                 }
                 """;
         assertThat(json.parse(content))//校验从 json 解析为 java
