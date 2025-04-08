@@ -31,9 +31,7 @@ public class BookJsonTests {
                     "title": "Title",
                     "author": "Author",
                     "price": 9.90,
-                    "createdDate": null,
-                    "lastModifiedDate": null,
-                    "version": 0
+                    "publisher": "Polarsophia"
                 }
                 """;
         assertThat(json.parse(content))//校验从 json 解析为 java

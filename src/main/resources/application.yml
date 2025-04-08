@@ -5,7 +5,7 @@ spring:
     import: "optional:configserver:"
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://configserver:8888
       request-connect-timeout: 5000
       request-read-timeout: 5000
       fail-fast: false
@@ -17,7 +17,7 @@ spring:
   datasource:
     username: jiaoyuyang
     password: haohaoxuexi
-    url: jdbc:postgresql://localhost:5432/polardb_catalog
+    url: jdbc:postgresql://polar-postgres:5432/polardb_catalog
     hikari:
       connection-timeout: 2000
       maximum-pool-size: 5
