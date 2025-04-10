@@ -1,14 +1,15 @@
-#stage 1
-#Start with a base image containing Java runtime
-FROM openjdk:17 as build
-
+FROM openjdk:17 AS builder
 # Add Maintainer Info
 LABEL maintainer="jiaoyuyang <jiaoyuyang@live.com>"
-
-# The application's jar file
+WORKDIR workspace
 ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} catalog-service.jar
+RUN java -Djarmode=layertools -jar catalog-service.jar extract
 
-ADD ${JAR_FILE} app.jar
-
-#execute the application
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+FROM openjdk:17
+WORKDIR workspace
+COPY --from=builder workspace/dependencies/ ./
+COPY --from=builder workspace/spring-boot-loader/ ./
+COPY --from=builder workspace/snapshot-dependencies/ ./
+COPY --from=builder workspace/application/ ./
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
