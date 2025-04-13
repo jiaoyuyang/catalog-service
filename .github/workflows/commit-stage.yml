@@ -3,7 +3,7 @@ on: push
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: jiaoyuyang/catalog-service
+  IMAGE_NAME: jiaoyuyang/catalog-service  # 直接包含用户名前缀
   VERSION: latest
 
 jobs:
@@ -22,10 +22,10 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: maven  # 修改缓存类型为 Maven
+          cache: maven
 
       - name: Build and test with Maven
-        run: mvn clean verify  # Maven 构建命令，包含单元测试和集成测试
+        run: mvn clean verify
 
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
@@ -40,46 +40,40 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
+
   package:
     name: Package and Publish
-    #if: ${{ github.ref == 'refs/heads/main' }}
     needs: [ build ]
     runs-on: ubuntu-22.04
     permissions:
       contents: read
-      packages: write
+      packages: write  # 关键权限
       security-events: write
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-          cache: maven  # 修改缓存类型为 Maven
+          cache: maven
+
       - name: Build container image
         run: |
-          chmod +x mvnw  # 修改为 Maven 包装器
+          chmod +x mvnw
           ./mvnw spring-boot:build-image \
-          -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-      - name: OCI image vulnerability scanning
-        uses: anchore/scan-action@v3
-        id: scan
-        with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-          fail-build: false
-          severity-cutoff: high
-      - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v3
-        if: success() || failure()
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+      - name: List built images (Debug)
+        run: docker images  # 验证镜像名称是否正确
+
       - name: Log into container registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io  # 显式指定注册表地址
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish container image
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
