@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Profile("default") //将该类分配给testdata profile，它仅在testdata profile处于激活状态时才会注册
+@Profile("testdata") //将该类分配给testdata profile，它仅在testdata profile处于激活状态时才会注册
 public class BookDataLoader {
     private final BookRepository bookRepository;
 
