@@ -128,27 +128,23 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <mainClass>com.pingan.catalogservice.CatalogServiceApplication</mainClass>
-                    <image>
-                        <builder>paketobuildpacks/builder-jammy-base</builder>
-                        <name>ghcr.io/jiaoyuyang/${project.name}</name>
-                        <env>
-                            <BP_JVM_VERSION>17</BP_JVM_VERSION>
-                        </env>
-                        <!-- Docker registry configuration (example)    -->
-                        <docker>
-                            <publish>
-                                <registry>
-                                    <username>${registryUsername}</username>
-                                    <password>${registryToken}</password>
-                                    <url>${registryUrl}</url>
-                                </registry>
-                            </publish>
-                        </docker>
-
-                    </image>
-                    <jvmArguments>-Dspring.profiles.active=testdata</jvmArguments>
+                    <repository>${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
                 </configuration>
             </plugin>
         </plugins>

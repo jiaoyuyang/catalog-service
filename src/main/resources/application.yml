@@ -5,7 +5,7 @@ spring:
     import: "optional:configserver:"
   cloud:
     config:
-      uri: http://configserver:8888
+      uri: http://config-service:8888
       request-connect-timeout: 5000
       request-read-timeout: 5000
       fail-fast: false
@@ -25,11 +25,11 @@ spring:
 server:
   port: 9001
   tomcat:
+    connection-timeout: 2s
+    keep-alive-timeout: 15s
     threads:
       max: 50
       min-spare: 5
-    connection-timeout: 2s
-    keep-alive-timeout: 15s
 
 
 polar:
