@@ -1,1 +1,13 @@
+// settings.gradle - 插件管理配置（仅能放在这里）
+pluginManagement {
+    repositories {
+        // 阿里云插件镜像（优先）
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        // Gradle 官方插件仓库（兜底）
+        gradlePluginPortal()
+        // Maven 中央仓库
+        mavenCentral()
+    }
+}
+
 rootProject.name = 'catalog-service'
