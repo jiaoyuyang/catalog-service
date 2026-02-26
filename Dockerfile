@@ -1,15 +1,18 @@
 # 基础镜像：ARM64架构的Ubuntu 24.04 LTS
 FROM arm64v8/ubuntu:24.04
 
+# 解决时间同步问题：强制更新系统时间（优先方案）
+RUN apt-get update -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false || \
+    (date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)"; apt-get update -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false)
+
 # 设置非交互式安装，避免apt-get安装过程中弹出交互提示
 ENV DEBIAN_FRONTEND=noninteractive
 
 # 设置时区（Ubuntu系统方式）
 RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo Asia/Shanghai > /etc/timezone
 
-# 更新软件源并安装OpenJDK 17 + 必要依赖
-# Ubuntu默认源已包含openjdk-17-jdk，无需额外配置源
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# 更新软件源并安装OpenJDK 17 + 必要依赖（跳过时间校验）
+RUN apt-get install -y --no-install-recommends \
     openjdk-17-jdk \
     libstdc++6 \
     zlib1g \
