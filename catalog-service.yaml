@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-service
+  template:
+    metadata:
+      labels:
+        app: catalog-service
+    spec:
+      containers:
+      - name: catalog-service
+        image: catalog-service:0.0.1-SNAPSHOT
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: temp-storage
+          mountPath: /tmp
+        imagePullPolicy: Never
+      volumes:
+      - name: temp-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-service
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: catalog-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30001
