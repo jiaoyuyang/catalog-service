@@ -1,39 +1,23 @@
-# 基础镜像：ARM64架构的Ubuntu 24.04 LTS
-FROM arm64v8/ubuntu:24.04
+# 使用Alpine官方ARM64架构镜像（适配ARM64如M1/M2/M3 Mac、ARM服务器）
+FROM arm64v8/alpine:3.18
 
-# 解决时间同步问题：强制更新系统时间（优先方案）
-RUN apt-get update -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false || \
-    (date -s "$(wget -qSO- --max-redirect=0 google.com 2>&1 | grep Date: | cut -d' ' -f5-8)"; apt-get update -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false)
+# 一键完成：换阿里云源+装ARM64版JDK+设时区+建目录（合并步骤，最快构建）
+RUN echo "https://mirrors.aliyun.com/alpine/v3.18/main/" > /etc/apk/repositories \
+    && echo "https://mirrors.aliyun.com/alpine/v3.18/community/" >> /etc/apk/repositories \
+    && apk add --no-cache openjdk17 tzdata libstdc++ zlib git \
+    && ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && apk del tzdata \
+    && mkdir -p /app && chmod -R 755 /app
 
-# 设置非交互式安装，避免apt-get安装过程中弹出交互提示
-ENV DEBIAN_FRONTEND=noninteractive
+# 修正环境变量写法（消除Docker Desktop语法警告，路径适配ARM64）
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+ENV PATH=/usr/lib/jvm/java-17-openjdk/bin:$PATH
+ENV TZ=Asia/Shanghai
 
-# 设置时区（Ubuntu系统方式）
-RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo Asia/Shanghai > /etc/timezone
-
-# 更新软件源并安装OpenJDK 17 + 必要依赖（跳过时间校验）
-RUN apt-get install -y --no-install-recommends \
-    openjdk-17-jdk \
-    libstdc++6 \
-    zlib1g \
-    tzdata \
-    git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*  # 清理缓存，减小镜像体积
-
-# 设置JAVA_HOME环境变量（Ubuntu的openjdk-17默认路径）
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
-ENV PATH=$JAVA_HOME/bin:$PATH
-
-# 创建应用目录并设置权限
-RUN mkdir -p /app && chmod -R 777 /app /dev/shm
+# 工作目录+复制JAR包（最后复制，利用缓存）
 WORKDIR /app
+COPY build/libs/catalog-service-0.0.1-SNAPSHOT.jar app.jar
 
-# 复制应用JAR包
-COPY build/libs/catalog-service-0.0.1-SNAPSHOT.jar /app/catalog-service.jar
-
-# 恢复DEBIAN_FRONTEND默认值（可选，提升镜像规范性）
-ENV DEBIAN_FRONTEND=
-
-# 启动命令
-ENTRYPOINT ["java", "-jar", "/app/catalog-service.jar"]
+# 启动命令（带JVM容器优化，适配ARM64的JVM参数）
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=80.0", "-jar", "app.jar"]
