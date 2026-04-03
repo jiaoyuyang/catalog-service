@@ -1,10 +1,10 @@
 
 package com.polarbookshop.catalogservice.domain;
 
-import javax.validation.constrains.NotBlank;
-import javax.validation.constrains.NotNull;
-import javax.validation.constrains.Pattern;
-import javax.validation.constrains.Positive;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 public record Book(
                    @NotBlank(message = "The book ISBN must be defined.")
