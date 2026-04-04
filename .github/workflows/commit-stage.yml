@@ -25,7 +25,7 @@ jobs:
       - name: Build and Test
         run: ./gradlew build --no-build-cache
 
-      # 👇 直接生成 SARIF，跳过手动转换
+      # 修复点1：使用正确的参数 output-format
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
@@ -33,7 +33,13 @@ jobs:
           path: "${{ github.workspace }}"
           fail-build: false
           severity-cutoff: high
-          format: sarif  # 关键：让它直接输出 SARIF 格式
+          output-format: sarif
+
+      # 修复点2：先验证文件是否生成，再上传
+      - name: Debug SARIF file
+        run: |
+          ls -la
+          cat ${{ steps.scan.outputs.sarif }} || echo "File not found"
 
       - name: Upload vulnerability report
         uses: github/codeql-action/upload-sarif@v4
