@@ -46,19 +46,7 @@ jobs:
             echo "---- SARIF head ----"
             head -n 20 "$sarif" || true
             echo "---- JSON validation ----"
-            python3 - <<'PY'
-import json, sys
-path = sys.argv[1]
-with open(path, 'r', encoding='utf-8') as f:
-    data = f.read()
-print('length:', len(data))
-try:
-    obj = json.loads(data)
-    print('valid JSON, version:', obj.get('version'))
-except Exception as exc:
-    print('invalid JSON:', exc)
-PY
- "$sarif"
+            python3 -c "import json, sys; path = sys.argv[1]; data = open(path, 'r', encoding='utf-8').read(); print('length:', len(data)); obj = json.loads(data); print('valid JSON, version:', obj.get('version'))" "$sarif"
           else
             echo "$sarif does not exist"
           fi
