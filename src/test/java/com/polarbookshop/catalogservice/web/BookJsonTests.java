@@ -20,28 +20,28 @@ class BookJsonTests {
         var book = new Book("1234567890", "Title", "Author", 9.90);
         var jsonContent = json.write(book);
         assertThat(jsonContent).extractingJsonPathStringValue("@.isbn")
-            .isEqualTo(book.isbn());
+                .isEqualTo(book.isbn());
         assertThat(jsonContent).extractingJsonPathStringValue("@.title")
-            .isEqualTo(book.title());
+                .isEqualTo(book.title());
         assertThat(jsonContent).extractingJsonPathStringValue("@.author")
-            .isEqualTo(book.author());
+                .isEqualTo(book.author());
         assertThat(jsonContent).extractingJsonPathNumberValue("@.price")
-            .isEqualTo(book.price());
+                .isEqualTo(book.price());
     }
 
     @Test
     void testDeserialize() throws Exception {
         var content = """
-        {
-            "isbn": "1234567890",
-            "title": "Title",
-            "author": "Author",
-            "price": 9.90
-        }
-        """;
+                {
+                    "isbn": "1234567890",
+                    "title": "Title",
+                    "author": "Author",
+                    "price": 9.90
+                }
+                """;
         assertThat(json.parse(content))
-            .usingRecursiveComparison()
-            .isEqualTo(new Book("1234567890", "Title", "Author", 9.90));
+                .usingRecursiveComparison()
+                .isEqualTo(new Book("1234567890", "Title", "Author", 9.90));
     }
 
 }

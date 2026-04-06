@@ -11,21 +11,16 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
-
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      - name: Build and Test
-        run: ./gradlew build --no-build-cache
-
-      # 修复点1：使用正确的参数 output-format
+      - name: Build, unit tests and integration tests
+        run: |
+          chmod +x gradlew
+          ./gradlew build
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
@@ -33,16 +28,8 @@ jobs:
           path: "${{ github.workspace }}"
           fail-build: false
           severity-cutoff: high
-          output-format: sarif
-
-      # 修复点2：先验证文件是否生成，再上传
-      - name: Debug SARIF file
-        run: |
-          ls -la
-          cat ${{ steps.scan.outputs.sarif }} || echo "File not found"
-
       - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
