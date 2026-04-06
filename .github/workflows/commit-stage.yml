@@ -22,13 +22,43 @@ jobs:
           chmod +x gradlew
           ./gradlew build
       - name: Code vulnerability scanning
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v4
         id: scan
         with:
-          path: "${{ github.workspace }}"
+          path: "."
           fail-build: false
           severity-cutoff: high
           output-format: sarif
+      - name: Show generated SARIF report info
+        if: steps.scan.outputs.sarif != ''
+        run: |
+          echo "SARIF path=${{ steps.scan.outputs.sarif }}"
+          sarif="${{ steps.scan.outputs.sarif }}"
+          if [ -z "$sarif" ]; then
+            echo "No SARIF report path was produced."
+            exit 0
+          fi
+          if [ -f "$sarif" ]; then
+            ls -lah "$sarif"
+            echo "---- SARIF head ----"
+            head -n 20 "$sarif" || true
+            echo "---- JSON validation ----"
+            python3 - <<'PY'
+import json, sys
+path = sys.argv[1]
+with open(path, 'r', encoding='utf-8') as f:
+    data = f.read()
+print('length:', len(data))
+try:
+    obj = json.loads(data)
+    print('valid JSON, version:', obj.get('version'))
+except Exception as exc:
+    print('invalid JSON:', exc)
+PY
+ "$sarif"
+          else
+            echo "$sarif does not exist"
+          fi
       - name: Upload vulnerability report
         uses: github/codeql-action/upload-sarif@v4
         if: steps.scan.outputs.sarif != ''
