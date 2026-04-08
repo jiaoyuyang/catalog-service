@@ -14,10 +14,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookController.class)
-    class BookControllerMvcTests {
+class BookControllerMvcTests {
 
-        @Autowired
-        private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
     @MockBean
     private BookService bookService;
@@ -27,8 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         String isbn = "73737313940";
         given(bookService.viewBookDetails(isbn)).willThrow(BookNotFoundException.class);
         mockMvc
-            .perform(get("/books/" + isbn))
-            .andExpect(status().isNotFound());
+                .perform(get("/books/" + isbn))
+                .andExpect(status().isNotFound());
     }
 
 }

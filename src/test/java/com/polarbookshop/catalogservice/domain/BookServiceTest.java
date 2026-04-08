@@ -12,10 +12,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-    class BookServiceTest {
+class BookServiceTest {
 
-        @Mock
-        private BookRepository bookRepository;
+    @Mock
+    private BookRepository bookRepository;
 
     @InjectMocks
     private BookService bookService;
@@ -23,20 +23,20 @@ import static org.mockito.Mockito.when;
     @Test
     void whenBookToCreateAlreadyExistsThenThrows() {
         var bookIsbn = "1234561232";
-        var bookToCreate = new Book(bookIsbn, "Title", "Author", 9.90);
+        var bookToCreate = Book.of(bookIsbn, "Title", "Author", 9.90, "Polarsophia");
         when(bookRepository.existsByIsbn(bookIsbn)).thenReturn(true);
         assertThatThrownBy(() -> bookService.addBookToCatalog(bookToCreate))
-            .isInstanceOf(BookAlreadyExistsException.class)
-            .hasMessage("A book with ISBN " + bookIsbn + " already exists.");
+                .isInstanceOf(BookAlreadyExistsException.class)
+                .hasMessage("A book with ISBN " + bookIsbn + " already exists.");
     }
 
-    @Test
-    void whenBookToReadDoesNotExistThenThrows() {
-        var bookIsbn = "1234561232";
-        when(bookRepository.findByIsbn(bookIsbn)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> bookService.viewBookDetails(bookIsbn))
-            .isInstanceOf(BookNotFoundException.class)
-            .hasMessage("The book with ISBN " + bookIsbn + " was not found.");
-    }
+	@Test
+	void whenBookToReadDoesNotExistThenThrows() {
+		var bookIsbn = "1234561232";
+		when(bookRepository.findByIsbn(bookIsbn)).thenReturn(Optional.empty());
+		assertThatThrownBy(() -> bookService.viewBookDetails(bookIsbn))
+				.isInstanceOf(BookNotFoundException.class)
+				.hasMessage("The book with ISBN " + bookIsbn + " was not found.");
+	}
 
 }
